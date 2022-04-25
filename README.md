@@ -4,8 +4,6 @@
 ## 安装方法
 ```javascript
 npm i localservicejs
-//Typescript声明文件
-npm i @types/localservicejs
 ```
 
 ## 使用方法
