@@ -2,12 +2,14 @@
 > 一个用于在web浏览器中模仿后端服务的插件，代码在mockjs的基础上进行了贴合场景的改动，一方面对代码进行了精简只保留了拦截部分，一方面能够在返回请求前能够通过异步阻塞请求，从而完全达到模拟类似后端服务的功能。
 
 ## 安装方法
-```
-
+```javascript
+npm i localservicejs
+//Typescript声明文件
+npm i @types/localservicejs
 ```
 
 ## 使用方法
-```(type:javascript)
+```javascript
 import LocalService from 'LocalServicejs'
 
 const url = 'http://localhost:8000/api/data'
