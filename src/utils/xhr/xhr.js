@@ -144,9 +144,11 @@ function MockXMLHttpRequest() {
 
 MockXMLHttpRequest._settings = {
     timeout: '10-100',
+    noError: false
     /*
         timeout: 50,
         timeout: '10-100',
+        noError: 两种返回模式，一种是绝对返回200，自定义code的模式，另一种是使用浏览器原生code
      */
 }
 
@@ -195,6 +197,7 @@ Util.extend(MockXMLHttpRequest.prototype, {
         }(MockXMLHttpRequest._settings.timeout)
         // 查找与请求参数匹配的数据模板
         var item = find(this.custom.options)
+        console.log('item',item)
         function handle(event) {
             // 同步属性 NativeXMLHttpRequest => MockXMLHttpRequest
             for (var i = 0; i < XHR_RESPONSE_PROPERTIES.length; i++) {
@@ -252,12 +255,12 @@ Util.extend(MockXMLHttpRequest.prototype, {
         else requestHeaders[name] = value
     },
     timeout: 0,
+    noError:false,
     withCredentials: false,
     upload: {},
     // https://xhr.spec.whatwg.org/#the-send()-method
     // Initiates the request.
     send: function send(data) {
-        console.log('send data:',data)
         var that = this
         this.custom.options.body = data
         // 原生 XHR
@@ -283,8 +286,10 @@ Util.extend(MockXMLHttpRequest.prototype, {
                     done()
 
                 }).catch((error) => {
-                    console.log(error)
-                    done()
+                    console.warn(`you can set reject({code:xxx,data:{}}) to setting the response code,default status code is 400`)
+                    let status = 400
+                    if(error.status){status = error.status}
+                    this.noError?done():done_error(status)
                 })
             } else {
                 setTimeout(() => {
@@ -306,6 +311,25 @@ Util.extend(MockXMLHttpRequest.prototype, {
             // fix #92 #93 by @qddegtya
             that.response = that.responseText = JSON.stringify(
                 convert(that.custom.template, that.custom.options),
+                null, 4
+            )
+            that.readyState = MockXMLHttpRequest.DONE
+            that.dispatchEvent(new Event('readystatechange' /*, false, false, that*/ ))
+            that.dispatchEvent(new Event('load' /*, false, false, that*/ ));
+            that.dispatchEvent(new Event('loadend' /*, false, false, that*/ ));
+        }
+        function done_error(status_code) {
+            that.readyState = MockXMLHttpRequest.HEADERS_RECEIVED
+            that.dispatchEvent(new Event('readystatechange' /*, false, false, that*/ ))
+            that.readyState = MockXMLHttpRequest.LOADING
+            that.dispatchEvent(new Event('readystatechange' /*, false, false, that*/ ))
+
+            that.status = status_code
+            that.statusText = HTTP_STATUS_CODES[status_code]
+
+            // fix #92 #93 by @qddegtya
+            that.response = that.responseText = JSON.stringify(
+                convert(that.custom.template, that.custom.options, 'error'),
                 null, 4
             )
             that.readyState = MockXMLHttpRequest.DONE
@@ -433,7 +457,6 @@ function find(options) {
             (!item.rtype || match(item.rtype.toLowerCase(), options.type.toLowerCase()))
         ) {
             // console.log('[mock]', options.url, '>', item.rurl)
-            console.log('return item',item)
             return item
         }
     }
@@ -450,9 +473,17 @@ function find(options) {
 }
 
 // 数据模板 ＝> 响应数据
-function convert(item, options) {
-    return Util.isFunction(item.template) ?
-        item.template(options) : MockXMLHttpRequest.LocalService.listener(item.template)
+function convert(item, options, type) {
+    if(type == 'error'){
+        
+        return Util.isFunction(item.error_template) ?
+        item.error_template(options) : MockXMLHttpRequest.LocalService.listener(item)
+    }
+    else{
+        return Util.isFunction(item.template) ?
+        item.template(options) : MockXMLHttpRequest.LocalService.listener(item)
+    }
+    
 }
 
 module.exports = MockXMLHttpRequest
