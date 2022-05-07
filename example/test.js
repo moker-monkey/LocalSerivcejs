@@ -22,7 +22,7 @@ require(['LocalService', 'axios'], function (LocalService, axios) {
         console.log('btn', req)
             // reject 是一个option设置，status为浏览器返回的状态码，response内为真实返回的数据
             return{
-                    msg: 'this is a error'
+                msg: 'this is a error'
             }
     },(req, resolve, reject) => {
         console.log('btn', req)

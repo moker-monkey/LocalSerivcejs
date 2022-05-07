@@ -197,7 +197,6 @@ Util.extend(MockXMLHttpRequest.prototype, {
         }(MockXMLHttpRequest._settings.timeout)
         // 查找与请求参数匹配的数据模板
         var item = find(this.custom.options)
-        console.log('item',item)
         function handle(event) {
             // 同步属性 NativeXMLHttpRequest => MockXMLHttpRequest
             for (var i = 0; i < XHR_RESPONSE_PROPERTIES.length; i++) {
@@ -280,13 +279,12 @@ Util.extend(MockXMLHttpRequest.prototype, {
         if (this.custom.async) {
             if (this.custom.template.beforeDone) {
                 //如果template是一个函数则执行并将resolve传入，知道回调函数执行完毕才会继续数据返回
-
-                new Promise((resolve, reject) => { this.custom.template.beforeDone(data, resolve, reject) }).then((req) => {
-                    this.custom.options['local'] = req
+                new Promise((resolve, reject) => { this.custom.template.beforeDone(this.custom.options, resolve, reject) }).then((req) => {
+                    this.custom.options['local_data'] = req
                     done()
-
                 }).catch((error) => {
                     console.warn(`you can set reject({code:xxx,data:{}}) to setting the response code,default status code is 400`)
+                    this.custom.options['local_data'] = error
                     let status = 400
                     if(error.status){status = error.status}
                     this.noError?done():done_error(status)
@@ -319,6 +317,7 @@ Util.extend(MockXMLHttpRequest.prototype, {
             that.dispatchEvent(new Event('loadend' /*, false, false, that*/ ));
         }
         function done_error(status_code) {
+            console.log('status', status_code)
             that.readyState = MockXMLHttpRequest.HEADERS_RECEIVED
             that.dispatchEvent(new Event('readystatechange' /*, false, false, that*/ ))
             that.readyState = MockXMLHttpRequest.LOADING
@@ -326,7 +325,7 @@ Util.extend(MockXMLHttpRequest.prototype, {
 
             that.status = status_code
             that.statusText = HTTP_STATUS_CODES[status_code]
-
+            console.log('error',that.custom.options)
             // fix #92 #93 by @qddegtya
             that.response = that.responseText = JSON.stringify(
                 convert(that.custom.template, that.custom.options, 'error'),
@@ -475,7 +474,6 @@ function find(options) {
 // 数据模板 ＝> 响应数据
 function convert(item, options, type) {
     if(type == 'error'){
-        
         return Util.isFunction(item.error_template) ?
         item.error_template(options) : MockXMLHttpRequest.LocalService.listener(item)
     }

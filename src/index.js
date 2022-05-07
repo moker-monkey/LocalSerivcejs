@@ -14,16 +14,28 @@ var LocalService = {
 // 避免循环依赖
 if (XHR) XHR.LocalService = LocalService
 
-LocalService.listener = function(rurl, rtype, template, error_template, beforeDone) {
+LocalService.listener = function(rurl, rtype, success_callback, error_callback, beforeDone) {
     // 拦截 XHR
     if (XHR) window.XMLHttpRequest = XHR
-    LocalService._listener_listed[rurl + (rtype || '')] = {
-        rurl: rurl,
-        rtype: rtype,
-        template: template,
-        error_template:error_template,
-        beforeDone:beforeDone
+    if(beforeDone){
+        LocalService._listener_listed[rurl + (rtype || '')] = {
+            rurl: rurl,
+            rtype: rtype,
+            template: success_callback,
+            error_template: error_callback,
+            beforeDone:beforeDone
+        }
     }
+    else if(error_callback){
+        LocalService._listener_listed[rurl + (rtype || '')] = {
+            rurl: rurl,
+            rtype: rtype,
+            template: success_callback,
+            error_template: {status:400,message:'error'},
+            beforeDone: error_callback
+        }
+    }
+    
     return LocalService
 }
 

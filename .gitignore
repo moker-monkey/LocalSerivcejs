@@ -120,6 +120,7 @@ yarn.lock
 
 #vscode
 .history
+.vscode
 
 #macOs
 .DS_Store
