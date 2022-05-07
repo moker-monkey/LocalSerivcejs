@@ -31,8 +31,16 @@ LocalService.listener = function(rurl, rtype, success_callback, error_callback, 
             rurl: rurl,
             rtype: rtype,
             template: success_callback,
-            error_template: {status:400,message:'error'},
+            error_template: null,
             beforeDone: error_callback
+        }
+    }else{
+        LocalService._listener_listed[rurl + (rtype || '')] = {
+            rurl: rurl,
+            rtype: rtype,
+            template: success_callback,
+            error_template: null,
+            beforeDone: null
         }
     }
     
