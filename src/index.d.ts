@@ -5,7 +5,7 @@ type error_reject = {
 }
 declare module 'localservicejs'{
     type _LocalService = {
-        listener:(url:string,method:string,service:any,error_service:any,beforeService?:beforeService)=>void
+        listener:(url:string,method:string,service:any,error_service?:any,beforeService?:beforeService)=>void
     }
     const LocalService:_LocalService
     export default LocalService;
