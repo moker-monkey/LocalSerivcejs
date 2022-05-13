@@ -47,4 +47,4 @@ LocalService.listener = function(rurl, rtype, success_callback, error_callback, 
     return LocalService
 }
 
-module.exports = LocalService
+export default LocalService
