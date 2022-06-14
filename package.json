@@ -1,6 +1,6 @@
 {
   "name": "localservicejs",
-  "version": "1.3.3",
+  "version": "2.0.0",
   "description": "用于模仿后端服务，代码来源于mockjs的功能精简，只保留了服务拦截功能，并且在此基础上进行了可异步阻塞的改良，改变了一些方法和变量的命名，使它更贴近使用场景。",
   "main": "./dist/LocalService.cjs",
   "module": "./dist/LocalService.mjs",
@@ -15,7 +15,7 @@
   "scripts": {
     "test": "mocha",
     "build": "cross-env BUILD_MODEL=commonjs webpack -c webpack.config.js",
-    "build:rollup":"rollup -c rollup.config.js"
+    "build:rollup": "rollup -c rollup.config.js"
   },
   "author": "moker-monker",
   "license": "MIT",
