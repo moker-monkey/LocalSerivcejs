@@ -1,7 +1,6 @@
 /* global require, module, window */
 
-var XHR
-if (typeof window !== 'undefined') XHR = require('./utils/xhr')
+import XHR from './utils/xhr/index'
 
 var LocalService = {
     XHR: XHR,
@@ -16,7 +15,7 @@ if (XHR) XHR.LocalService = LocalService
 
 LocalService.listener = function(rurl, rtype, success_callback, error_callback, beforeDone) {
     // 拦截 XHR
-    if (XHR) window.XMLHttpRequest = XHR
+    if (XHR) globalThis.XMLHttpRequest = XHR
     if(beforeDone){
         LocalService._listener_listed[rurl + (rtype || '')] = {
             rurl: rurl,

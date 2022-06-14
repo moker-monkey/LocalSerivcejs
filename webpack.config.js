@@ -3,34 +3,32 @@ const path = require('path');
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 
 module.exports = {
-    entry: './src/index.js',
+
     mode: 'production',
     output: {
         path: path.resolve(__dirname, 'dist'),
         filename: 'LocalService.js',
         library: "LocalService",
-        libraryTarget: 'umd'
+        libraryTarget: 'umd',
+        // libraryExport: 'default'
     },
     module: {
+        //当遇到.mjs或者.js时导入babel-polify，将import from转换为require
         rules: [{
-            test: /\.m?js$/,
-            exclude: /(node_modules|bower_components)/,
+            test: /\.js$/,
             use: {
                 loader: 'babel-loader',
                 options: {
                     "presets": [
                         ["@babel/preset-env", {
-                            "useBuiltIns": "usage",
-                            "modules": false
-                        }]
+                            modules: 'auto'
+                        }],
                     ],
                     "plugins": [
                         [
                             "@babel/plugin-transform-runtime", {
-                                "corejs": false,
-                                "helpers": false,
-                                "regenerator": false,
-                                "useESModules": false
+                                "useESModules": false,
+                                corejs: 3,
                             }
                         ]
                     ],
@@ -38,7 +36,5 @@ module.exports = {
             }
         }]
     },
-
-
     devtool: 'source-map'
 };

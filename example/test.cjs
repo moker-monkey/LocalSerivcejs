@@ -11,6 +11,7 @@ require.config({
 
 // 加载 Mock
 require(['LocalService', 'axios'], function (LocalService, axios) {
+    console.log('cjs',LocalService)
     // 使用 Mock
     LocalService.listener("https://localhost:8888/api", "POST", (req) => {
         console.log('finally',req)

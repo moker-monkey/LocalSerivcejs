@@ -1,6 +1,7 @@
+
 // mocha,describe,it,chai为全局变量
 const expect = chai.expect
-
+console.log(LocalService)
 
 describe('GET method', () => {
     before(() => {
