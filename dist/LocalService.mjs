@@ -212,6 +212,22 @@ var HTTP_STATUS_CODES = {
     MockXMLHttpRequest
 */
 
+function parseURLQuery(url) {
+    // const url = location.search; // 项目中可直接通过search方法获取url中"?"符后的字串
+    let _url = url.split("?")[1];
+    let obj = {}; // 声明参数对象
+    if (_url) {
+
+        let arr = _url.split("&"); // 以&符号分割为数组
+        for (let i = 0; i < arr.length; i++) {
+            let arrNew = arr[i].split("="); // 以"="分割为数组
+            obj[arrNew[0]] = arrNew[1];
+        }
+        return obj;
+    }
+    return null;
+}
+
 function MockXMLHttpRequest() {
     // 初始化 custom 对象，用于存储自定义属性
     this.custom = {
@@ -260,7 +276,8 @@ Util.extend(MockXMLHttpRequest.prototype, {
             password: password,
             options: {
                 url: url,
-                type: method
+                type: method,
+                query: null
             }
         });
 
@@ -347,8 +364,9 @@ Util.extend(MockXMLHttpRequest.prototype, {
             this.custom.xhr.send(data);
             return
         }
-
-        // 拦截 XHR
+        if (this.custom.options.type === 'GET' && this.custom.options.url) {
+            this.custom.options.query = parseURLQuery(this.custom.options.url);
+        }        // 拦截 XHR
 
         // X-Requested-With header
         this.setRequestHeader('X-Requested-With', 'MockXMLHttpRequest');
@@ -386,7 +404,9 @@ Util.extend(MockXMLHttpRequest.prototype, {
 
             that.status = that.custom.options['status'] || 200;
             that.statusText = that.custom.options['status'] ? HTTP_STATUS_CODES[that.custom.options['status']] : HTTP_STATUS_CODES[200];
-            that.custom.template.template = ()=>{return that.custom.options['local_data']};
+            that.custom.template.template = () => {
+                return that.custom.options['local_data']
+            };
             // fix #92 #93 by @qddegtya
             that.response = that.responseText = JSON.stringify(
                 convert(that.custom.template, that.custom.options),
@@ -406,8 +426,10 @@ Util.extend(MockXMLHttpRequest.prototype, {
 
             that.status = status_code;
             that.statusText = HTTP_STATUS_CODES[status_code];
-            console.log('error,options', that.custom.options);
-            that.custom.template.error_template = ()=>{return that.custom.options['local_data']};
+            console.log('error options', that.custom.options);
+            that.custom.template.error_template = () => {
+                return that.custom.options['local_data']
+            };
             // fix #92 #93 by @qddegtya
             that.response = that.responseText = JSON.stringify(
                 convert(that.custom.template, that.custom.options, 'error'),
@@ -537,7 +559,6 @@ function find(options) {
             (!item.rurl || match(item.rurl, options.url)) &&
             (!item.rtype || match(item.rtype.toLowerCase(), options.type.toLowerCase()))
         ) {
-            // console.log('[mock]', options.url, '>', item.rurl)
             return item
         }
     }

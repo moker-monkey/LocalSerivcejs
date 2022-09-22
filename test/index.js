@@ -13,7 +13,7 @@ describe('GET method', () => {
             })
         })
 
-        LocalService.listener('http://localhost:8080/api/test/error', 'GET', (req, resolve, reject) => {
+        LocalService.listener(new RegExp('http://localhost:8080/api/test/error.*'), 'GET', (req, resolve, reject) => {
             reject({
                 status: 401,
                 response: {
@@ -29,7 +29,6 @@ describe('GET method', () => {
             }
         }).then((res) => {
             try {
-                console.log(res)
                 expect(res.data).to.be.deep.include({
                     msg: 'this message is resolve'
                 })
@@ -41,7 +40,7 @@ describe('GET method', () => {
     })
     it('error', (down) => {
         axios.get('http://localhost:8080/api/test/error').catch((err) => {
-            console.log(err.response)
+            console.log('err',err)
             try {
                 expect(err.response.data).to.be.deep.include({
                     message: 'this message is not'
