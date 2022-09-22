@@ -28,7 +28,7 @@ describe('LocalService', function () {
             })
         }
 
-        LocalService.listener('https://localhost:8888/api', 'GET', service, errorService, beforeService)
+        LocalService.listener('https://localhost:8888/api', 'GET', service)
         axios.post('https://localhost:8888/api', {
             meg: 'hello'
         }, {

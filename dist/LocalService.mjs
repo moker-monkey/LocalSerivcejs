@@ -399,7 +399,6 @@ Util.extend(MockXMLHttpRequest.prototype, {
         }
 
         function done_error(status_code) {
-            console.log('status', status_code);
             that.readyState = MockXMLHttpRequest.HEADERS_RECEIVED;
             that.dispatchEvent(new Event('readystatechange' /*, false, false, that*/ ));
             that.readyState = MockXMLHttpRequest.LOADING;
