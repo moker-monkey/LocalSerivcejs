@@ -277,7 +277,7 @@ Util.extend(MockXMLHttpRequest.prototype, {
             options: {
                 url: url,
                 type: method,
-                query: null
+                params: null
             }
         });
 
@@ -365,7 +365,9 @@ Util.extend(MockXMLHttpRequest.prototype, {
             return
         }
         if (this.custom.options.type === 'GET' && this.custom.options.url) {
-            this.custom.options.query = parseURLQuery(this.custom.options.url);
+            this.custom.options.params = parseURLQuery(this.custom.options.url);
+        } else {
+            this.custom.options.params = JSON.parse(this.custom.options.body);
         }        // 拦截 XHR
 
         // X-Requested-With header

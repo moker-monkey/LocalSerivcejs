@@ -14,8 +14,8 @@
   ],
   "scripts": {
     "test": "mocha",
-    "build": "cross-env BUILD_MODEL=commonjs webpack -c webpack.config.js",
-    "build:rollup": "rollup -c rollup.config.js"
+    "build:webpack": "cross-env BUILD_MODEL=commonjs webpack -c webpack.config.js",
+    "build": "rollup -c rollup.config.js"
   },
   "author": "moker-monker",
   "license": "MIT",
